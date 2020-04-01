@@ -10,16 +10,16 @@ wifi.startsmart(
     wifi.sta.connect()
     local mytimer = tmr.create()
     mytimer:register(
-      5000,
-      tmr.ALARM_SINGLE,
+      1000,
+      tmr.ALARM_AUTO,
       function(t)
-        local ip = wifi.sta.getip() 
-        if ip== nil then
+        local ip = wifi.sta.getip()
+        if ip == nil then
           print(string.format("Fail:%s,%s", ssid, password))
+          t:unregister()
         else
-          print(string.format("Connected,IP is %s",ip))
+          print(string.format("Connected,IP is %s", ip))
         end
-        t:unregister()
       end
     )
     mytimer:start()
