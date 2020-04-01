@@ -1,25 +1,31 @@
 pin = 1
 gpio.mode(pin, gpio.OUTPUT)
 
+--wifi
 wifi.setmode(wifi.STATION)
-station_cfg = {}
-station_cfg.ssid = "ASUS"
-station_cfg.pwd = "654321A?cs"
-station_cfg.save = true
-wifi.sta.config(station_cfg)
-wifi.sta.autoconnect(1)
-
-local mytimer = tmr.create()
-mytimer:register(
-  10000,
-  tmr.ALARM_SINGLE,
-  function(t)
-    ip = wifi.sta.getip()
-    print(ip)
+wifi.startsmart(
+  0,
+  function(ssid, password)
+    print(string.format("Success:%s,%s", ssid, password))
+    wifi.sta.connect()
+    local mytimer = tmr.create()
+    mytimer:register(
+      5000,
+      tmr.ALARM_SINGLE,
+      function(t)
+        local ip = wifi.sta.getip() 
+        if ip== nil then
+          print(string.format("Fail:%s,%s", ssid, password))
+        else
+          print(string.format("Connected,IP is %s",ip))
+        end
+        t:unregister()
+      end
+    )
+    mytimer:start()
   end
 )
-mytimer:start()
-
+--mqtt
 m =
   mqtt.Client(
   "5e82c09b53efb708b42bdcbc_node3_0_0_2020033114",
